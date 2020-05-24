@@ -115,12 +115,11 @@ bool MonoSLAM::GoOneStep(cv::Mat frame, bool save_trajectory, bool enable_mappin
   u.setZero();
 
   // Record the current position so that I can estimate velocity
-  // (We can guarantee that the state vector has position; we can't guarantee
-  // that it has velocity.)
+  // (We can guarantee that the state vector has position; we can't guarantee that it has velocity.)
   motion_model_->func_xp(xv_);
 
   Eigen::Vector3d prev_xp_pos;
-  prev_xp_pos << motion_model_->xpRES_(0),motion_model_->xpRES_(1),motion_model_->xpRES_(2);
+  prev_xp_pos << motion_model_->xpRES_(0), motion_model_->xpRES_(1), motion_model_->xpRES_(2);
 
   // Prediction step
   kalman_->KalmanFilterPredict(this, u);
@@ -179,15 +178,13 @@ bool MonoSLAM::GoOneStep(cv::Mat frame, bool save_trajectory, bool enable_mappin
   return  true;
 }
 
-// Automatically select the n features with the best selection scores. For each
-// feature, this predicts their location and calls
-// Feature_Measurement_Model::selection_score(), selecting the n with the best
-// score.
+// Automatically select the n features with the best selection scores.
+// For each feature, this predicts their location and calls
+// Feature_Measurement_Model::selection_score(), selecting the n with the best score.
 // @returns the number of visible features.
 int MonoSLAM::auto_select_n_features(int n)
 {
-  int cant_see_flag;    // Flag which we will set to 0 if a feature is
-                        // visible and various other values if it isn't
+  int cant_see_flag; // Flag which we will set to 0 if a feature is visible and various other values if it isn't
 
   // Deselect all features
   while (selected_feature_list_.size() != 0)
@@ -196,15 +193,12 @@ int MonoSLAM::auto_select_n_features(int n)
   // Have vector of up to n scores; highest first
   vector<FeatureAndScore> feature_and_score_vector;
 
-  vector<Feature *>::iterator it;
-
-  for (it = feature_list_.begin(); it != feature_list_.end(); ++it) {
+  for (vector<Feature *>::iterator it = feature_list_.begin(); it != feature_list_.end(); ++it) {
     if ((*it)->fully_initialised_flag_) {
       predict_single_feature_measurements(*it);
 
       // See if the feature is visible
-      cant_see_flag = (*it)->feature_model_->visibility_test(motion_model_->xpRES_,
-                                                             (*it)->y_, (*it)->xp_org_, (*it)->h_);
+      cant_see_flag = (*it)->feature_model_->visibility_test(motion_model_->xpRES_, (*it)->y_, (*it)->xp_org_, (*it)->h_);
 
       // Feature has passed visibility tests
       if (cant_see_flag == 0) {
@@ -337,14 +331,13 @@ int MonoSLAM::make_measurements(cv::Mat image)
 {
   int count = 0;
 
-  if (selected_feature_list_.size() == 0) {
+  if (selected_feature_list_.size() == 0)
     return  0;
-  }
 
   successful_measurement_vector_size_ = 0;
 
   for (vector<Feature *>::const_iterator it = selected_feature_list_.begin();
-      it != selected_feature_list_.end(); ++it) {
+       it != selected_feature_list_.end(); ++it) {
 
     if(measure_feature(image, (*it)->patch_, (*it)->z_, (*it)->h_, (*it)->S_) == false) {
       failed_measurement_of_feature((*it));
@@ -450,8 +443,7 @@ bool MonoSLAM::elliptical_search(const cv::Mat &image,
   // Do the search
   for (urel = urelstart; urel <= urelfinish; ++urel) {
     for (vrel = vrelstart; vrel <= vrelfinish; ++vrel) {
-      if(PuInv(0,0) * urel * urel + 2 * PuInv(0,1) * urel * vrel + PuInv(1,1) * vrel * vrel  <
-         kNoSigma_*kNoSigma_) {
+      if(PuInv(0,0) * urel * urel + 2 * PuInv(0,1) * urel * vrel + PuInv(1,1) * vrel * vrel  < kNoSigma_*kNoSigma_) {
         corr = correlate2_warning(0, 0, BOXSIZE, BOXSIZE, ucentre + urel - (BOXSIZE - 1) / 2, vcentre + vrel - (BOXSIZE - 1) / 2, patch, image, &sdpatch, &sdimage);
 
         if (corr <= corrmax) {
@@ -1195,8 +1187,7 @@ void MonoSLAM::find_best_patch_inside_region(const cv::Mat &image,
 
 // Simple function to find the eigenvalues of the 2*2 symmetric matrix
 // \f$ \begin{pmatrix}A & B \\ B & C \end{pmatrix} \nonumber \f$
-void MonoSLAM::find_eigenvalues(double A, double B, double C,
-                                double *eval1ptr, double *eval2ptr)
+void MonoSLAM::find_eigenvalues(double A, double B, double C, double *eval1ptr, double *eval2ptr)
 {
   double BB = sqrt((A + C) * (A + C) - 4 * (A * C - B * B));
 
@@ -1259,8 +1250,7 @@ void MonoSLAM::copy_into_patch(const cv::Mat frame, cv::Mat patch)
 // this feature.
 // @returns A pointer to the FeatureInitInfo object to be filled in with further
 // initialisation information.
-void MonoSLAM::add_new_partially_initialised_feature(
-    cv::Mat patch, const Eigen::VectorXd &y)
+void MonoSLAM::add_new_partially_initialised_feature(cv::Mat patch, const Eigen::VectorXd &y)
 {
   Feature *nf = new Feature(patch, y, this);
 

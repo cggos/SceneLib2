@@ -81,9 +81,7 @@ void MotionModel::func_q(const Eigen::VectorXd &xp)
   qRES_ = Eigen::Quaterniond(xp(3), xp(4), xp(5), xp(6));
 }
 
-void MotionModel::func_fv_and_dfv_by_dxv(const Eigen::VectorXd &xv,
-                                         const Eigen::VectorXd &u,
-                                         const double delta_t)
+void MotionModel::func_fv_and_dfv_by_dxv(const Eigen::VectorXd &xv, const Eigen::VectorXd &u, const double delta_t)
 {
   Eigen::Vector3d rold, vold, omegaold, rnew, vnew, omeganew;
   Eigen::Quaterniond qold, qnew;
@@ -154,10 +152,8 @@ void MotionModel::func_Q(const Eigen::VectorXd &xv, const Eigen::VectorXd &u, co
   // Form of this could change later, but for now assume that
   // V and Omega are independent, and that each of their components is
   // independent...
-  double linear_velocity_noise_variance = kSdAComponentFilter_ * kSdAComponentFilter_ *
-                                          delta_t * delta_t;
-  double angular_velocity_noise_variance = kSdAlphaComponentFilter_ * kSdAlphaComponentFilter_ *
-                                           delta_t * delta_t;
+  double linear_velocity_noise_variance = kSdAComponentFilter_ * kSdAComponentFilter_ * delta_t * delta_t;
+  double angular_velocity_noise_variance = kSdAlphaComponentFilter_ * kSdAlphaComponentFilter_ * delta_t * delta_t;
 
   // Independence means that the matrix is diagonal
   Eigen::MatrixXd Pnn(6,6);

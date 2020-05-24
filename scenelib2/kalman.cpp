@@ -39,19 +39,16 @@ namespace SceneLib2 {
 
 Kalman::Kalman()
 {
-
 }
 
 Kalman::~Kalman()
 {
-
 }
 
-void Kalman::KalmanFilterPredict(MonoSLAM *monoslam, Eigen::Vector3d &u)
+void Kalman::KalmanFilterPredict(MonoSLAM *monoslam, const Eigen::Vector3d &u)
 {
   // Make model calculations: results are stored in RES matrices
-  monoslam->motion_model_->func_fv_and_dfv_by_dxv(monoslam->xv_, u,
-                                                  monoslam->kDeltaT_);
+  monoslam->motion_model_->func_fv_and_dfv_by_dxv(monoslam->xv_, u, monoslam->kDeltaT_);
   monoslam->motion_model_->func_Q(monoslam->xv_, u, monoslam->kDeltaT_);
 
   monoslam->xv_ = monoslam->motion_model_->fvRES_;
@@ -62,8 +59,7 @@ void Kalman::KalmanFilterPredict(MonoSLAM *monoslam, Eigen::Vector3d &u)
                    monoslam->motion_model_->QxRES_;
 
   // Change the covariances between vehicle state and feature states
-  for (vector<Feature *>::iterator it = monoslam->feature_list_.begin();
-       it != monoslam->feature_list_.end(); ++it) {
+  for (vector<Feature *>::iterator it = monoslam->feature_list_.begin(); it != monoslam->feature_list_.end(); ++it) {
     (*it)->Pxy_ = monoslam->motion_model_->dfv_by_dxvRES_ * (*it)->Pxy_;
   }
 }

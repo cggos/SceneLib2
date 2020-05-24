@@ -40,7 +40,7 @@
 
 namespace SceneLib2 {
 
-// Implements an Extended Kalman Filter.
+/// Implements an Extended Kalman Filter.
 class Kalman {
  public:
   EIGEN_MAKE_ALIGNED_OPERATOR_NEW
@@ -48,7 +48,7 @@ class Kalman {
   Kalman();
   ~Kalman();
 
-  void KalmanFilterPredict(MonoSLAM *monoslam, Eigen::Vector3d &u);
+  void KalmanFilterPredict(MonoSLAM *monoslam, const Eigen::Vector3d &u);
   void KalmanFilterUpdate(MonoSLAM *monoslam);
 };
 
